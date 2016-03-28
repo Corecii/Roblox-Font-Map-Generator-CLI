@@ -96,6 +96,7 @@ public class CmdController {
 						break;
 					case "f":
 						fontName = str;
+						break;
 					case "s":
 						switch (num) {
 							case 1:
@@ -115,10 +116,13 @@ public class CmdController {
 						break;
 					case "j":
 						fontJsonName = str;
+						break;
 					case "t":
 						outputLua = str.equals("1") || str.toLowerCase().equals("true");
+						break;
 					case "w":
 						waitTime = Integer.parseInt(str);
+						break;
 				}
 			}
 			num++;
@@ -147,7 +151,7 @@ public class CmdController {
 				System.out.println("In order to upload, you must provide a .roblosecurity cookie! Upload aborted.");
 				return;
 			}
-				
+
 		String name = fontName.replaceAll("\\W","");
 		String lua = "{\n";
 		int loc = 0;
