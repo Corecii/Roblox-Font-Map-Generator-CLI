@@ -20,7 +20,8 @@ public class CmdController {
 			{"--json\n-j","\n\tThe name of the json file. Same replacements as image","\n\t-j FONT-SIZE-LOC.json","\n\t-i FONT-image-SIZE.json\n"},
 			{"--table\n-t","\n\tWhether or not to print a lua table of the names, sizes, decal ids, and their image ids to the output","\n\tOnly works in upload mode.","\n\t-l true\n"},
 			{"--wait\n-w","\n\tThe amount of time to wait between each generation/upload","\n\t-w 0","\n\t-w 5\n"},
-			{"--luafile\n-y","\n\tThe file that the lua output should be saved to","\n\t-y \"arial-info.lua\"","\n\t-w 5\n"}
+			{"--luafile\n-y","\n\tThe file that the lua output should be saved to","\n\t-y \"arial-info.lua\"","\n\t-w 5\n"},
+			{"--fiddler","\n\tConfigure Java to use a proxy set to 127.0.0.1:8888","\n\t--fiddler\n"}
 	};
 	public static void main(String[] argsR) throws IOException, InterruptedException {
 		boolean isUpload = false;
@@ -89,6 +90,10 @@ public class CmdController {
 					next = "w";
 					num = 0;
 					break;
+				case "--fiddler":
+					next = "fid";
+					num = 1;
+					break;
 			}
 			if (num != 0) {
 				switch (next) {
@@ -133,6 +138,12 @@ public class CmdController {
 					case "w":
 						waitTime = Integer.parseInt(str);
 						break;
+					case "fid":
+					    System.setProperty("http.proxyHost", "127.0.0.1");
+					    System.setProperty("https.proxyHost", "127.0.0.1");
+					    System.setProperty("http.proxyPort", "8888");
+					    System.setProperty("https.proxyPort", "8888");
+					    break;
 				}
 			}
 			num++;
@@ -157,6 +168,11 @@ public class CmdController {
 		if (isUpload)
 			if (roblosecurity != null) {
 				token = Uploader.getToken(roblosecurity);
+				if (token == null) {
+					System.out.println("Aborting! Login failed! Make sure to grab the correct cookie!");
+					return;
+				}
+
 			} else {
 				System.out.println("In order to upload, you must provide a .roblosecurity cookie! Upload aborted.");
 				return;
@@ -189,6 +205,9 @@ public class CmdController {
 					if (res.message != null && res.message.equals("You are uploading too much, please try again later.")) {
 						TimeUnit.SECONDS.sleep(5);
 						i--;
+					} else if (res.message != null && res.message.equals("Login invalid")) {
+						System.out.println("Aborting! Login failed! Make sure to grab the correct cookie!");
+						return;
 					} else
 						System.out.println("\tUpload failed! Retrying. " + (i + 1) + "/10");
 					res = Uploader.upload(nname1, json, roblosecurity, token, image);

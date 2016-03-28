@@ -72,6 +72,7 @@ public class Uploader {
 		s.close();
 		conn.disconnect();
 		boolean wasSuccess = content.matches(".*\"Success\"\\:true.*");
+		//boolean failedLogin = content.matches(".*/Login/Default.*");
 		Matcher am = assetPattern.matcher(content);
 		Matcher bm = backingPattern.matcher(content);
 		Matcher mm = messagePattern.matcher(content);
@@ -83,6 +84,8 @@ public class Uploader {
 			backingId = Integer.parseInt(bm.group(1));
 		if (mm.find())
 			msg = mm.group(1);
+		//if (failedLogin)
+		//	msg = "Login invalid";
 		return new uploadResponse(wasSuccess, assetId, backingId, content, msg);
 	}
 }
