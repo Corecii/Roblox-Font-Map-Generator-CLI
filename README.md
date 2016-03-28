@@ -27,11 +27,11 @@ The additions provided here provide:
 	-r
 	        Your .ROBLOSECURITY cookie that's used to upload images to your account
 	        This is required if you set -u or --upload
-	        -r COOKIEGOESHERE
+	        -r "COOKIEGOESHERE"
 	--local
 	-l
 	        Whether or not to save to a file
-	        -f true
+	        -l true
 	--font
 	-f
 	        The name of the font to generate for
@@ -46,8 +46,8 @@ The additions provided here provide:
 	--image
 	-i
 	        The name of the image file. FONT, SIZE, and LOC have replacements
-	        -i FONT-SIZE-LOC.png
-	        -i FONT-image-SIZE.png
+	        -i "FONT-SIZE-LOC.png"
+	        -i "FONT-image-SIZE.png"
 	--json
 	-j
 	        The name of the json file. Same replacements as image
@@ -55,11 +55,20 @@ The additions provided here provide:
 	        -i FONT-image-SIZE.json
 	--table
 	-t
-	        Whether or not to print a lua table of the names, sizes, decal ids, and their image ids to the output
+	        Whether or not to print a lua table of the names, sizes, decal ids, and their image
+	ids to the output
 	        Only works in upload mode.
 	        -l true
 	--wait
 	-w
-	        The amount of time to wait between each generation/upload. Suggested 2 for uploads.
+	        The amount of time to wait between each generation/upload
 	        -w 0
 	        -w 5
+	--luafile
+	-y
+	        The file that the lua output should be saved to
+	        -y "arial-info.lua"
+	        -w 5
+	--fiddler
+	        Configure Java to use a proxy set to 127.0.0.1:8888
+	        --fiddler
