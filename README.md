@@ -3,10 +3,12 @@ A ROBLOX custom fontmap generator and uploader.
 A modified version of M0RGOTH's FontMapGen program and a modified version of M0RGOTH's FontLibrary.
 
 M0RGOTH's original work provided:
+
 	* The ability to generate fontmap images and pairing JSON files through a GUI interface
 	* The ability to automatically load the fonts into the game after manually uploading them
 
 The additions provided here provide:
+
 	* A command-line interface to the fontmap generator
 	* Removes the GUI chooser
 	* Uploading to ROBLOX if the .ROBLOSECURITY cookie is provided
