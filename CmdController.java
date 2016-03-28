@@ -12,14 +12,15 @@ import javax.imageio.ImageIO;
 public class CmdController {
 	static String[][] help = {
 			{"--upload\n-u","\n\tWhether or not to upload the images to roblox, 1 or true","\n\t-u false\n"},
-			{"--roblosecurity\n-r","\n\tYour .ROBLOSECURITY cookie that's used to upload images to your account\n\tThis is required if you set -u or --upload","\n\t-r COOKIEGOESHERE\n"},
-			{"--local\n-l","\n\tWhether or not to save to a file","\n\t-f true\n"},
+			{"--roblosecurity\n-r","\n\tYour .ROBLOSECURITY cookie that's used to upload images to your account\n\tThis is required if you set -u or --upload","\n\t-r \"COOKIEGOESHERE\"\n"},
+			{"--local\n-l","\n\tWhether or not to save to a file","\n\t-l true\n"},
 			{"--font\n-f","\n\tThe name of the font to generate for","\n\t-f Arial","\n\t-f \"Times New Roman\"\n"},
 			{"--size\n-s","\n\tTakes up to three arguments: minSize, maxSize, and iterationLength","\n\t-s 16","\n\t-s 16 20","\n\t-s 10 40 10\n"},
-			{"--image\n-i","\n\tThe name of the image file. FONT, SIZE, and LOC have replacements","\n\t-i FONT-SIZE-LOC.png","\n\t-i FONT-image-SIZE.png\n"},
+			{"--image\n-i","\n\tThe name of the image file. FONT, SIZE, and LOC have replacements","\n\t-i \"FONT-SIZE-LOC.png\"","\n\t-i \"FONT-image-SIZE.png\"\n"},
 			{"--json\n-j","\n\tThe name of the json file. Same replacements as image","\n\t-j FONT-SIZE-LOC.json","\n\t-i FONT-image-SIZE.json\n"},
 			{"--table\n-t","\n\tWhether or not to print a lua table of the names, sizes, decal ids, and their image ids to the output","\n\tOnly works in upload mode.","\n\t-l true\n"},
-			{"--wait\n-w","\n\tThe amount of time to wait between each generation/upload. Suggested 2 for uploads.","\n\t-w 0","\n\t-w 5\n"}
+			{"--wait\n-w","\n\tThe amount of time to wait between each generation/upload","\n\t-w 0","\n\t-w 5\n"},
+			{"--luafile\n-y","\n\tThe file that the lua output should be saved to","\n\t-y \"arial-info.lua\"","\n\t-w 5\n"}
 	};
 	public static void main(String[] argsR) throws IOException, InterruptedException {
 		boolean isUpload = false;
@@ -33,6 +34,7 @@ public class CmdController {
 		String fontImagName = "FONT-LOC-SIZE.png";
 		String fontJsonName = "FONT-LOC-SIZE.json";
 		boolean outputLua = true;
+		String luaToFile = "";
 		String next = "";
 		int num = 0;
 		for (String str : argsR) {
@@ -77,6 +79,11 @@ public class CmdController {
 					next = "t";
 					num = 0;
 					break;
+				case "--luafile":
+				case "-y":
+					next = "y";
+					num = 0;
+					break;
 				case "--wait":
 				case "-w":
 					next = "w";
@@ -117,6 +124,9 @@ public class CmdController {
 					case "j":
 						fontJsonName = str;
 						break;
+					case "y":
+						luaToFile = str;
+						break;
 					case "t":
 						outputLua = str.equals("1") || str.toLowerCase().equals("true");
 						break;
@@ -153,7 +163,7 @@ public class CmdController {
 			}
 
 		String name = fontName.replaceAll("\\W","");
-		String lua = "{\n";
+		String lua = "return {\n";
 		int loc = 0;
 		for (int size : sizes) {
 			if (size == 0)
@@ -192,6 +202,12 @@ public class CmdController {
 		lua = lua+"}\n";
 		if (outputLua)
 			System.out.println(lua);
+		if (!luaToFile.equals("")) {
+	        PrintWriter printWriter = new PrintWriter(luaToFile.replaceAll("FONT", name), "UTF-8");
+	        printWriter.print(lua);
+	        printWriter.close();
+		}
+
 	}
 
 }
