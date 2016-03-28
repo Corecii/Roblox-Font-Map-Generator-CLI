@@ -136,7 +136,7 @@ public class CmdController {
 		}
 		int[] sizes;
 		{
-			sizes = new int[Math.max(sz0, sz1) - Math.min(sz0, sz1) + 1];
+			sizes = new int[(int) Math.ceil((Math.max(sz0, sz1) - Math.min(sz0, sz1))/itr) + 1];
 			int loc = 0;
 			for (int i = Math.min(sz0, sz1); i < Math.max(sz0, sz1); i+=itr) {
 				sizes[loc++] = i;
@@ -156,6 +156,8 @@ public class CmdController {
 		String lua = "{\n";
 		int loc = 0;
 		for (int size : sizes) {
+			if (size == 0)
+				break;
 			String nname1 = fontImagName.replaceAll("FONT", name).replaceAll("SIZE", String.valueOf(size)).replaceAll("LOC", String.valueOf(loc));
 			String nname2 = fontJsonName.replaceAll("FONT", name).replaceAll("SIZE", String.valueOf(size)).replaceAll("LOC", String.valueOf(loc));
 			BufferedImage image = FontMapGenerator.generateFontMap(fontName, size);
