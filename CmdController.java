@@ -3,6 +3,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -155,14 +156,15 @@ public class CmdController {
 					System.out.print(str);
 			return;
 		}
-		int[] sizes;
+		Integer[] sizes;
 		{
-			sizes = new int[(int) Math.ceil((Math.max(sz0, sz1) - Math.min(sz0, sz1))/itr) + 1];
-			int loc = 0;
+			//sizes = new int[(int) Math.ceil((Math.max(sz0, sz1) - Math.min(sz0, sz1) + 1)/itr) + 1];
+			ArrayList<Integer> sizesTmp = new ArrayList<Integer>();
 			for (int i = Math.min(sz0, sz1); i < Math.max(sz0, sz1); i+=itr) {
-				sizes[loc++] = i;
+				sizesTmp.add(i);
 			}
-			sizes[loc] = Math.max(sz0,  sz1);
+			sizesTmp.add(Math.max(sz0,  sz1));
+			sizes = sizesTmp.toArray(new Integer[0]);
 		}
 		String token = null;
 		if (isUpload)
