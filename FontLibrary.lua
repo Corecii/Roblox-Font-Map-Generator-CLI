@@ -96,11 +96,13 @@ end
 --]]
 function class:LoadFont(decalId)
 	local info = market:GetProductInfo(decalId)
-	local imageId = -1
+	local imageId = 0
 	while imageId < 1 do
 		local info2 = market:GetProductInfo(decalId + imageId)
-		if info2.Name == info.Name and info2.Creator == info.Creator and info2.AssetTypeId == 1 then
+		if info2.AssetTypeId == 1 and info2.Name == info.Name and info2.Creator == info.Creator then
 			imageId = decalId + imageId
+		else
+			imageId = imageId - 1
 		end
 	end
 	local data = web:JSONDecode(info.Description)
