@@ -88,7 +88,7 @@ UNSUPPORTED.PROPERTIES = {
 }
 
 local OTHER_PROPERTIES = {
-	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Parent", "ZIndex"
+	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Parent", "ZIndex", "ScaleFontSize"
 }
 
 for i, prop in next, TRANSFERRED.PROPERTIES do
@@ -182,9 +182,20 @@ end
 
 -- Override property accessors/mutators
 
+function class:SetScaleFontSize(fontSize)
+	assert(type(size) == "number", "Expected a number for the scale base.")
+	self.scaleBase = fontSize
+	self.font = FontLibrary:GetFont(self.font.name, self.scaleBase)
+	self:SetText(self.object.Text)
+end
+
+function class:GetScaleFontSize()
+	return self.scaleBase or 0
+end
+
 function class:SetFont(fontName)
 	assert(type(fontName) == "string", "Expected a string for the font name.")
-	self.font = FontLibrary:GetFont(fontName, self.fontSize)
+	self.font = FontLibrary:GetFont(fontName, (not self.scaleBase or self.scaleBase == 0) and self.fontSize or self.scaleBase)
 	self:SetText(self.object.Text)
 end
 
@@ -210,6 +221,10 @@ function class:SetText(text)
 	self.base:ClearAllChildren()
 
 	if not self.font or not self.fontSize then return end
+	local scale = 1
+	if self.scaleBase and self.scaleBase > 0 then
+		scale = self.fontSize/self.scaleBase
+	end
 
 	local line
 
@@ -238,7 +253,7 @@ function class:SetText(text)
 				local label = Instance.new("ImageLabel")
 				label.Name = char
 				label.BackgroundTransparency = 1
-				label.Size = UDim2.new(0, width, 0, self.font.height)
+				label.Size = UDim2.new(0, width*scale, 0, self.font.height*scale)
 				label.Position = UDim2.new(0, guiX, 0, 0)
 				label.Image = self.font.image
 				label.ImageRectSize = Vector2.new(width, self.font.height)
@@ -261,7 +276,7 @@ function class:SetText(text)
 				label.Parent = line
 			end
 
-			line.Size = UDim2.new(0, guiX + width, 0, self.font.height)
+			line.Size = UDim2.new(0, guiX + width*scale, 0, self.font.height*scale)
 		else
 			width = byte == FontLibrary.WHITE_SPACE.NEW_LINE and 0 or
 				byte == FontLibrary.WHITE_SPACE.TAB and self.font.spaceWidth*4 or
@@ -269,7 +284,7 @@ function class:SetText(text)
 		end
 
 		if guiX > guiWidth then
-			guiWidth = guiX + width
+			guiWidth = guiX + width*scale
 		end
 
 		local nextSpace = text:find(" ", i)
@@ -280,29 +295,29 @@ function class:SetText(text)
 		elseif byte == FontLibrary.WHITE_SPACE.TAB then
 			if self.object.TextWrapped and nextWord then
 				local nextWidth = FontLibrary:GetStringWidth(self.font, nextWord)
-				if guiX + self.font.spaceWidth*4 + nextWidth > self.base.AbsoluteSize.X then
+				if guiX + self.font.spaceWidth*4*scale + nextWidth*scale > self.base.AbsoluteSize.X then
 					guiY = guiY + 1
 					guiX = 0
 				else
-					guiX = guiX + width
+					guiX = guiX + width*scale
 				end
 			else
-				guiX = guiX + width
+				guiX = guiX + width*scale
 			end
 		elseif byte == FontLibrary.WHITE_SPACE.SPACE then
 			if self.object.TextWrapped and nextWord then
 				local nextWidth = FontLibrary:GetStringWidth(self.font, nextWord)
-				if guiX + self.font.spaceWidth + nextWidth > self.base.AbsoluteSize.X then
+				if guiX + self.font.spaceWidth*scale + nextWidth*scale > self.base.AbsoluteSize.X then
 					guiY = guiY + 1
 					guiX = 0
 				else
-					guiX = guiX + width
+					guiX = guiX + width*scale
 				end
 			else
-				guiX = guiX + width
+				guiX = guiX + width*scale
 			end
 		elseif valid then
-			guiX = guiX + width
+			guiX = guiX + width*scale
 		end
 	end
 
@@ -317,19 +332,19 @@ function class:SetText(text)
 			xPos = Vector2.new(1, -line.Size.X.Offset)
 		end
 
-		local total, totalUsed = self.base.AbsoluteSize.Y, (guiY + 1)*self.font.height
+		local total, totalUsed = self.base.AbsoluteSize.Y, (guiY + 1)*self.font.height*scale
 		if self.object.TextYAlignment == Enum.TextYAlignment.Top then
-			yPos = Vector2.new(0, self.font.height*(i - 1))
+			yPos = Vector2.new(0, self.font.height*scale*(i - 1))
 		elseif self.object.TextYAlignment == Enum.TextYAlignment.Center then
-			yPos = Vector2.new(0, (total - totalUsed)/2 + self.font.height*(i - 1))
+			yPos = Vector2.new(0, (total - totalUsed)/2 + self.font.height*scale*(i - 1))
 		elseif self.object.TextYAlignment == Enum.TextYAlignment.Bottom then
-			yPos = Vector2.new(0, (total - totalUsed) + self.font.height*(i - 1))
+			yPos = Vector2.new(0, (total - totalUsed) + self.font.height*scale*(i - 1))
 		end
 
 		line.Position = UDim2.new(xPos.X, xPos.Y, yPos.X, yPos.Y)
 	end
 
-	self.textBounds = Vector2.new(guiWidth, (guiY + 1)*self.font.height)
+	self.textBounds = Vector2.new(guiWidth, (guiY + 1)*self.font.height*scale)
 
 	return self.base
 end

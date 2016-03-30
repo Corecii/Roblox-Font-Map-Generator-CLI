@@ -61,9 +61,7 @@ function class:GetFont(fontName, fontSize)
 	if fontSize then
 		return self.Fonts[fontName][fontSize]
 	else
-		for i, font in next, list do
-			return font
-		end
+		return ({next(list)})[2]
 	end
 end
 
