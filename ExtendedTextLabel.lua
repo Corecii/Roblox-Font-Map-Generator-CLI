@@ -3,6 +3,8 @@
 	The TextLabel class but better. Made for use with the FontLibrary module.
 	@author Blake Mealey (m0rgoth)
 	@since 2015/05/05
+
+	Changes have been made to this file by Corecii Cyr for use in https://github.com/Corecii/Roblox-Font-Map-Generator-CLI
 --]]
 
 --[[
@@ -88,7 +90,7 @@ UNSUPPORTED.PROPERTIES = {
 }
 
 local OTHER_PROPERTIES = {
-	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Parent", "ZIndex", "ScaleFontSize"
+	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Parent", "ZIndex"
 }
 
 for i, prop in next, TRANSFERRED.PROPERTIES do
@@ -183,7 +185,7 @@ end
 -- Override property accessors/mutators
 
 function class:SetScaleFontSize(fontSize)
-	assert(type(size) == "number", "Expected a number for the scale base.")
+	assert(type(fontSize) == "number", "Expected a number for the font size scale.")
 	self.scaleBase = fontSize
 	self.font = FontLibrary:GetFont(self.font.name, self.scaleBase)
 	self:SetText(self.object.Text)
@@ -195,7 +197,9 @@ end
 
 function class:SetFont(fontName)
 	assert(type(fontName) == "string", "Expected a string for the font name.")
-	self.font = FontLibrary:GetFont(fontName, (not self.scaleBase or self.scaleBase == 0) and self.fontSize or self.scaleBase)
+	local font = FontLibrary:GetBestFont(fontName,  self.fontSize)
+	self.font = font
+	self.scaleBase = font and font.size
 	self:SetText(self.object.Text)
 end
 
@@ -435,6 +439,7 @@ end
 function new(object)
 	local module = {}
 	local mt = {}
+	local parent = object and object.Parent
 
 	object = object or Instance.new("TextLabel")
 
@@ -479,7 +484,7 @@ function new(object)
 		module[prop] = object[prop]
 	end
 
-	module.Parent = object.Parent
+	module.Parent = parent
 
 	return module
 end
