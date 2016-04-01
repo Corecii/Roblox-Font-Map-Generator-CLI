@@ -3,6 +3,8 @@
 	A system for managing custom fonts in ROBLOX
 	@author Blake Mealey (m0rgoth)
 	@since 2015/05/05
+
+	Changes have been made to this file by Corecii Cyr for use in https://github.com/Corecii/Roblox-Font-Map-Generator-CLI
 --]]
 
 local class = {}
@@ -66,6 +68,37 @@ function class:GetFont(fontName, fontSize)
 end
 
 --[[
+	Retrieves the font of the same name with the size of:
+		The same, if it exists.
+		The nearest bigger size, if it exists.
+		The nearest smaller size, if it exists.
+	This should return good quality fonts that work with scaling
+	@param fontName: The name of the Font you want
+	@param fontSize: The size of the Font you want. If not given, finds the largest of the fontName
+	@return the Font if it exists, nil if not; the scale factor to get the requested size from the font
+--]]
+function class:GetBestFont(fontName, fontSize)
+	local list = self.Fonts[fontName]
+	if not list then return end
+	local sortedList = {}
+	for _, v in next, list do
+		sortedList[#sortedList + 1] = v
+	end
+	table.sort(sortedList, function(a, b)
+		return a.size < b.size
+	end)
+	fontSize = fontSize or math.huge
+	local last
+	for _, v in next, sortedList do
+		last = v
+		if v.size >= fontSize then
+			break
+		end
+	end
+	return last, last and fontSize/last.size
+end
+
+--[[
 	Prints out all of the fonts and their sizes that are currently loaded in the module
 --]]
 function class:ListFonts()
@@ -95,16 +128,26 @@ end
 function class:LoadFont(decalId)
 	local info = market:GetProductInfo(decalId)
 	local imageId = 0
+	local info2 = info
 	while imageId < 1 do
-		local info2 = market:GetProductInfo(decalId + imageId)
-		if info2.AssetTypeId == 1 and info2.Name == info.Name and info2.Creator == info.Creator then
-			imageId = decalId + imageId
+		if info2.AssetTypeId == 1 and info2.Name == info.Name and info2.Creator.Id == info.Creator.Id then
+			break
 		else
 			imageId = imageId - 1
 		end
+		info2 = market:GetProductInfo(decalId + imageId)
 	end
-	local data = web:JSONDecode(info.Description)
-	data.image = "rbxassetid://"..imageId
+	local data
+	assert(
+		pcall(function()
+			data = web:JSONDecode(info.Description)
+		end)
+		or pcall(function()
+			data = web:JSONDecode(info2.Description)
+		end),
+		"Could not load the given font: Neither the decal nor the image contain the needed JSON data."
+	)
+	data.image = "rbxassetid://"..(decalId + imageId)
 	if not data.padding then
 		data.padding = 0
 	end
@@ -112,6 +155,26 @@ function class:LoadFont(decalId)
 		class.Fonts[data.name] = {}
 	end
 	class.Fonts[data.name][data.size] = data
+	if data.uploadVersion == 1 then
+		if data.imageWidth and data.imageHeight and data.maxWidth and data.maxHeight and (data.imageWidth > data.maxWidth or data.imageHeight > data.maxHeight) then
+			--quick hack to fix scaling for images that are too big
+			local scale
+			if data.imageWidth > data.imageHeight then
+				scale = data.maxWidth/data.imageWidth
+			else
+				scale = data.maxHeight/data.imageHeight
+			end
+			data.padding = data.padding*scale
+			data.height = data.height*scale
+			data.spaceWidth = data.spaceWidth*scale
+			data.isScaled = true
+			for _, list in next, data.widths do
+				for i, v in next, list do
+					list[i] = v*scale
+				end
+			end
+		end
+	end
 	return data
 end
 
@@ -196,6 +259,9 @@ function class:GetByteWidth(font, byte)
 		end
 	end
 
+	if font.isScaled then
+		return widthsList[offset + 1] - 2
+	end
 	return widthsList[offset + 1]
 end
 
@@ -243,6 +309,9 @@ function class:GetByteSpriteOffsets(font, byte)
 		x = x + widthsList[i + 1]
 	end
 
+	if font.isScaled then
+		return x + 1, y + 1
+	end
 	return x, y
 end
 

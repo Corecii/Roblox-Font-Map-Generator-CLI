@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0_114.
  */
- 
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -90,8 +90,26 @@ public class FontMapGenerator {
         }
         string = string.replaceAll("\\W", "");
 
-        object = "{\n\t\"name\":\"" + string + "\",\n" + "\t\"size\":" + n + ",\n" + "\t\"padding\":" + n4 + ",\n" + "\t\"height\":" + n8 + ",\n" + "\t\"spaceWidth\":" + fontMetrics.charWidth(' ') + ",\n" + "\t\"widths\":{\n" + "\t\t\"upperAlpha\":[" + FontMapGenerator.arrayToString(arrn2) + "],\n" + "\t\t\"lowerAlpha\":[" + FontMapGenerator.arrayToString(arrn3) + "],\n" + "\t\t\"numerical\":[" + FontMapGenerator.arrayToString(arrn4) + "],\n" + "\t\t\"punctuation\":[" + FontMapGenerator.arrayToString(arrn5) + "]\n" + "\t}\n" + "}";
-  
+        object =
+        	"{\n"
+        		+ "\t\"name\":\"" + string + "\",\n"
+	        	+ "\t\"imageWidth\":" + bufferedImage.getWidth() + ",\n"
+	        	+ "\t\"imageHeight\":" + bufferedImage.getHeight() + ",\n"
+	        	+ "\t\"uploadVersion\":1,\n" //change this is ROBLOX changes how it scales images.
+	        	+ "\t\"maxWidth\":1020,\n"   //quick hack to tell the Lua script how to scale the image
+	        	+ "\t\"maxHeight\":1020,\n"  //update these when roblox's image size restrictions change
+	        	+ "\t\"size\":" + n + ",\n"
+	        	+ "\t\"padding\":" + n4 + ",\n"
+	        	+ "\t\"height\":" + n8 + ",\n"
+	        	+ "\t\"spaceWidth\":" + fontMetrics.charWidth(' ') + ",\n"
+	        	+ "\t\"widths\":{\n"
+	        		+ "\t\t\"upperAlpha\":[" + FontMapGenerator.arrayToString(arrn2) + "],\n"
+	        		+ "\t\t\"lowerAlpha\":[" + FontMapGenerator.arrayToString(arrn3) + "],\n"
+	        		+ "\t\t\"numerical\":[" + FontMapGenerator.arrayToString(arrn4) + "],\n"
+	        		+ "\t\t\"punctuation\":[" + FontMapGenerator.arrayToString(arrn5) + "]\n"
+	        	+ "\t}\n"
+        	+ "}";
+
         lastJSON = (String) object;
         return bufferedImage;
     }
