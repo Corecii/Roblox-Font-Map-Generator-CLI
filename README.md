@@ -5,24 +5,24 @@ It has been modified from M0RGOTH's work.
 
 Features:
 
-	* Conflictless (no overlaps) fontmap generation.
-	* Fontmaps may use multiple images if a single image may be too big.
-	* Automatic uploading of images.
-	* Automatic creation of JSON and Lua JSON loaders for fonts.
-	* Loading of fonts into ROBLOX through the FontLibrary.
-	* Applying fonts to existing TextLabels through the ExtendedTextLabel.
-	* Scaling of fonts for sizes that aren't uploaded.
+* Conflictless (no overlaps) fontmap generation.
+* Fontmaps may use multiple images if a single image may be too big.
+* Automatic uploading of images.
+* Automatic creation of JSON and Lua JSON loaders for fonts.
+* Loading of fonts into ROBLOX through the FontLibrary.
+* Applying fonts to existing TextLabels through the ExtendedTextLabel.
+* Scaling of fonts for sizes that aren't uploaded.
 
 The following things have been changes have been made from M0RGOTH's work:
 
-	* + Uploading was added.
-	* + The command-line interface was added.
-	* + Fontmap and JSON generation was rewritten to prevent conflicts/overlaps.
-	* + Loading of fontmaps into ROBLOX was rewritten to support the new format.
-	* | The method of displaying fonts through ExtendedTextLabel was modified to support the new format.
-	* | The names and descriptions of methods in the FontLibrary were modified to fit the new format.
-	* - Old methods that no longer applied were removed from the FontLibrary.
-	* - The graphical interface was removed.
+* + Uploading was added.
+* + The command-line interface was added.
+* + Fontmap and JSON generation was rewritten to prevent conflicts/overlaps.
+* + Loading of fontmaps into ROBLOX was rewritten to support the new format.
+* | The method of displaying fonts through ExtendedTextLabel was modified to support the new format.
+* | The names and descriptions of methods in the FontLibrary were modified to fit the new format.
+* - Old methods that no longer applied were removed from the FontLibrary.
+* - The graphical interface was removed.
 
 **This module is not compatible with the original FontLibrary and associated tools. It uses different generation and layout methods.**
 
