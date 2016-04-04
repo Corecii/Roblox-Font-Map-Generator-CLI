@@ -1,22 +1,30 @@
-# RbxFontMapGenCmd
-A ROBLOX custom fontmap generator and uploader.
-A modified version of M0RGOTH's FontMapGen program and a modified version of M0RGOTH's FontLibrary.
+# RbxFontMapGenCmdV2
 
-M0RGOTH's original work provided:
+This work provides the ability to upload and use custom fonts in ROBLOX.
+It has been modified from M0RGOTH's work.
 
-* The ability to generate fontmap images and pairing JSON files through a GUI interface
-* The ability to automatically load the fonts into the game after manually uploading them
+Features:
 
-The additions provided here provide:
+	* Conflictless (no overlaps) fontmap generation.
+	* Fontmaps may use multiple images if a single image may be too big.
+	* Automatic uploading of images.
+	* Automatic creation of JSON and Lua JSON loaders for fonts.
+	* Loading of fonts into ROBLOX through the FontLibrary.
+	* Applying fonts to existing TextLabels through the ExtendedTextLabel.
+	* Scaling of fonts for sizes that aren't uploaded.
 
-* A command-line interface to the fontmap generator
-* Removes the GUI chooser
-* Uploading to ROBLOX if the .ROBLOSECURITY cookie is provided
-* Uploading fonts in a range of sizes
-* A Lua table as a result, which can be used to automatically load in the list of fonts
-* Modifications to the ROBLOX side (FontLibrary) in order to support JSON data being in the decal instead of the image.
+The following things have been changes have been made from M0RGOTH's work:
 
-**Automatically uploaded files are not entirely compatible with the original FontLibrary because they store JSON data in the Decal asset instead of the Image.**
+	* + Uploading was added.
+	* + The command-line interface was added.
+	* + Fontmap and JSON generation was rewritten to prevent conflicts/overlaps.
+	* + Loading of fontmaps into ROBLOX was rewritten to support the new format.
+	* | The method of displaying fonts through ExtendedTextLabel was modified to support the new format.
+	* | The names and descriptions of methods in the FontLibrary were modified to fit the new format.
+	* - Old methods that no longer applied were removed from the FontLibrary.
+	* - The graphical interface was removed.
+
+**This module is not compatible with the original FontLibrary and associated tools. It uses different generation and layout methods.**
 
 	Args:
 	--upload
@@ -45,20 +53,18 @@ The additions provided here provide:
 	        -s 10 40 10
 	--image
 	-i
-	        The name of the image file. FONT, SIZE, and LOC have replacements
-	        -i "FONT-SIZE-LOC.png"
-	        -i "FONT-image-SIZE.png"
+	        The name of the image file. FONT, SIZE, LOC, NUM have replacements
+	                FONT: The name of the font (only alphanumerics)
+	                SIZE: The fontsize integer
+	                LOC: The location in the list of fontsizes to generate
+	                NUM: The number this image is in the list of images for this font/size combo
+	        -i "FONT-LOC-SIZE-NUM.png"
+	        -i "FONT-image-SIZE-NUM.png"
 	--json
 	-j
 	        The name of the json file. Same replacements as image
-	        -j FONT-SIZE-LOC.json
-	        -i FONT-image-SIZE.json
-	--table
-	-t
-	        Whether or not to print a lua table of the names, sizes, decal ids, and their image
-	ids to the output
-	        Only works in upload mode.
-	        -l true
+	        -j FONT-LOC-SIZE-NUM.json
+	        -j FONT-image-SIZE.json
 	--wait
 	-w
 	        The amount of time to wait between each generation/upload
@@ -67,8 +73,16 @@ The additions provided here provide:
 	--luafile
 	-y
 	        The file that the lua output should be saved to
-	        -y "arial-info.lua"
-	        -w 5
+	        -y "FONT-LOC-SIZE.lua"
+	--multiple
+	-m
+	        Whether or not to generate a Lua file for each font
+	        -c 1
+	        -c true
+	--combined
+	-c
+	        Whether or not to generate a final lua file containing all font data
+	        -c 0n   -c false
 	--fiddler
 	        Configure Java to use a proxy set to 127.0.0.1:8888
 	        --fiddler
