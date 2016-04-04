@@ -1,7 +1,3 @@
-/*
- * Decompiled with CFR 0_114.
- */
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -12,14 +8,9 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import javax.imageio.ImageIO;
 
 class FontCharacter implements Comparable<FontCharacter>, Comparator<FontCharacter> {
 	enum CompareMode {WIDTH, WIDTH_HEIGHT, HEIGHT, HEIGHT_WIDTH, BASELINE, CHARACTER};
@@ -256,86 +247,5 @@ public class FontMapGenerator {
 		results.add(new GeneratorResult(font, currentChars.toArray(new FontCharacter[0]), image));
 
 		return results.toArray(new GeneratorResult[0]);
-	}
-
-	public static BufferedImage generateFontMap(String fontName, int fontSize) {
-		int n2;
-		int i;
-		Object object;
-		char c;
-		int staticPadding = 10;
-		int numStart = 48;
-		int lowerStart = 97;
-		int upperStart = 65;
-		int[] symbolChars = new int[]{46, 44, 47, 63, 33, 58, 59, 39, 36, 37, 40, 41, 91, 93, 123, 125, 60, 62, 34, 64, 35, 94, 38, 42, 95, 45, 43, 61, 92, 124, 126, 96};
-		int[] upperWidths = new int[26];
-		int[] lowerWidths = new int[26];
-		int[] numWidths = new int[10];
-		int[] symbolWidths = new int[symbolChars.length];
-		Font font = new Font(fontName, 0, fontSize);
-		FontMetrics fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
-		int scentPadding = fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent();
-		int width = 0;
-		int height = (scentPadding + staticPadding) * 5;
-		for (i = 0; i < 26; ++i) {
-			width += fontMetrics.charWidth(upperStart + i);
-		}
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics2D = (Graphics2D)bufferedImage.getGraphics();
-		graphics2D.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
-		graphics2D.setColor(Color.WHITE);
-		graphics2D.setFont(font);
-		int n11 = 0;
-		for (i = 0; i < 26; ++i) {
-			c = (char)(upperStart + i);
-			graphics2D.drawString(String.valueOf(c), n11, fontMetrics.getMaxAscent() + staticPadding);
-			upperWidths[i] = n2 = fontMetrics.charWidth(c);
-			n11 += n2;
-		}
-		n11 = 0;
-		for (i = 0; i < 26; ++i) {
-			c = (char)(lowerStart + i);
-			graphics2D.drawString(String.valueOf(c), n11, (fontMetrics.getMaxAscent() + staticPadding) * 2 + fontMetrics.getMaxDescent());
-			lowerWidths[i] = n2 = fontMetrics.charWidth(c);
-			n11 += n2;
-		}
-		n11 = 0;
-		for (i = 0; i < 10; ++i) {
-			c = (char)(numStart + i);
-			graphics2D.drawString(String.valueOf(c), n11, (fontMetrics.getMaxAscent() + staticPadding) * 3 + fontMetrics.getMaxDescent() * 2);
-			numWidths[i] = n2 = fontMetrics.charWidth(c);
-			n11 += n2;
-		}
-		n11 = 0;
-		for (i = 0; i < symbolChars.length; ++i) {
-			c = (char)symbolChars[i];
-			graphics2D.drawString(String.valueOf(c), n11, (fontMetrics.getMaxAscent() + staticPadding) * 4 + fontMetrics.getMaxDescent() * 3);
-			symbolWidths[i] = n2 = fontMetrics.charWidth(c);
-			n11 += n2;
-		}
-		fontName = fontName.replaceAll("\\W", "");
-
-		object =
-			"{\n"
-				+ "\t\"uploadVersion\":1,\n"
-				+ "\t\"maxWidth\":" + maxWidth + ",\n"   //quick hack to tell the Lua script how to scale the image
-				+ "\t\"maxHeight\":" + maxHeight + ",\n" //update these when roblox's image size restrictions change
-				+ "\t\"imageWidth\":" + bufferedImage.getWidth() + ",\n"
-				+ "\t\"imageHeight\":" + bufferedImage.getHeight() + ",\n"
-				+ "\t\"name\":\"" + fontName + "\",\n"
-				+ "\t\"size\":" + fontSize + ",\n"
-				+ "\t\"padding\":" + staticPadding + ",\n"
-				+ "\t\"height\":" + scentPadding + ",\n"
-				+ "\t\"spaceWidth\":" + fontMetrics.charWidth(' ') + ",\n"
-				+ "\t\"widths\":{\n"
-					+ "\t\t\"upperAlpha\":[" + FontMapGenerator.arrayToString(upperWidths) + "],\n"
-					+ "\t\t\"lowerAlpha\":[" + FontMapGenerator.arrayToString(lowerWidths) + "],\n"
-					+ "\t\t\"numerical\":[" + FontMapGenerator.arrayToString(numWidths) + "],\n"
-					+ "\t\t\"punctuation\":[" + FontMapGenerator.arrayToString(symbolWidths) + "]\n"
-				+ "\t}\n"
-			+ "}";
-
-		lastJSON = (String) object;
-		return bufferedImage;
 	}
 }

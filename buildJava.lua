@@ -1,3 +1,3 @@
-os.execute("rm -rf ./build")
-os.execute("javac -d ./build ./java/*.java")
-os.execute("jar cv -f ./final/cmd.jar -e CmdController ./build/*")
+os.execute("javac -d . ./java/*.java")
+os.execute("jar cvfe ./final/cmd.jar CmdController ./*.class")
+os.execute("rm *.class")

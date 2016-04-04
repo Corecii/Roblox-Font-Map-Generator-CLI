@@ -3,6 +3,8 @@
 This work provides the ability to upload and use custom fonts in ROBLOX.
 It has been modified from M0RGOTH's work.
 
+The jar download is in final, if you don't want to build it yourself.
+
 Features:
 
 * Conflictless (no overlaps) fontmap generation.
