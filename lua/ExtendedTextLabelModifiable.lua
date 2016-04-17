@@ -64,7 +64,7 @@ end
 local TRANSFERRED = {}
 
 TRANSFERRED.PROPERTIES = {
-	"Active", "BackgroundColor3", "BackgroundTransparency", "BorderColor3", "BorderSizePixel", "ClipsDescendants", "Draggable", "Position",
+	"Active", "BackgroundColor3", "BackgroundTransparency", "BorderColor3", "BorderSizePixel", "ClipsDescendants", "Draggable",
 	"Rotation", "SizeConstraint", "Visible", "Name" --, "Archivable", "archivable"
 }
 
@@ -90,7 +90,7 @@ UNSUPPORTED.PROPERTIES = {
 }
 
 local OTHER_PROPERTIES = {
-	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Parent", "ZIndex"
+	"Text", "TextColor", "TextColor3", "TextTransparency", "TextWrapped", "Size", "Position", "Parent", "ZIndex"
 }
 
 for i, prop in next, TRANSFERRED.PROPERTIES do
@@ -479,7 +479,18 @@ function class:SetSize(size)
 end
 
 function class:GetSize()
-	return self.base.Size
+	return self.object.Size
+end
+
+function class:SetPosition(pos)
+	self.object.Position = pos
+	self.base.Position = UDim2.new(0, 0, 0, 0)
+	self.__newLock = nil
+	self:SetText(self.object.Text)
+end
+
+function class:GetPosition()
+	return self.object.Position
 end
 
 function class:SetParent(obj)
